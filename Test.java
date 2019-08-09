@@ -1,4 +1,9 @@
-package com.shiyuesoft.microservice.test.api;
+package com.example.list2treeandtree2list;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,26 +11,57 @@ import java.util.List;
 /**
  * @author jeri
  * @version 1.0.0
- * @company www.shiyuesoft.com
- * @date 2019/5/31 11:02
+ * @date 2019/8/9 15:44
  * @see
  */
 public class Test {
 
-    public static void main(String[] args) {
-            List<Menu> menuList = new ArrayList<>();
-            menuList.add(new Menu("GN001D000","0","系统管理","/admin","Y"));
-            menuList.add(new Menu("GN001D100","GN001D000","权限管理","/admin","Y"));
-            menuList.add(new Menu("GN001D110","GN001D100","密码修改","/admin","Y"));
-            menuList.add(new Menu("GN001D120","GN001D100","新加用户","/admin","Y"));
-            menuList.add(new Menu("GN001D200","GN001D000","系统监控","/admin","Y"));
-            menuList.add(new Menu("GN001D210","GN001D200","在线用户","/admin","Y"));
-            menuList.add(new Menu("GN002D000","0","订阅区","/admin","Y"));
-            menuList.add(new Menu("GN003D000","0","未知领域","/admin","Y"));
-            MenuTree menuTree = new MenuTree(menuList);
-            List<Menu> menuList1 = menuTree.buildTree();
-            for (Menu m:menuList1){
-                System.out.println(m);
-            }
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
     }
+
+    public static void main(String[] args) throws JsonProcessingException {
+
+        List<TreeNode> list = new ArrayList<>();
+
+        TreeNode treeNode1 = new TreeNode("1", "广州", null);
+        TreeNode treeNode2 = new TreeNode("2", "深圳", null);
+
+        TreeNode treeNode3 = new TreeNode("3", "天河区", treeNode1.getId());
+        TreeNode treeNode4 = new TreeNode("4", "越秀区", treeNode1.getId());
+        TreeNode treeNode5 = new TreeNode("5", "黄埔区", treeNode1.getId());
+        TreeNode treeNode6 = new TreeNode("6", "石牌", treeNode3.getId());
+        TreeNode treeNode7 = new TreeNode("7", "百脑汇", treeNode6.getId());
+
+
+        TreeNode treeNode8 = new TreeNode("8", "南山区", treeNode2.getId());
+        TreeNode treeNode9 = new TreeNode("9", "宝安区", treeNode2.getId());
+        TreeNode treeNode10 = new TreeNode("10", "科技园", treeNode8.getId());
+
+        list.add(treeNode1);
+        list.add(treeNode2);
+        list.add(treeNode3);
+        list.add(treeNode4);
+        list.add(treeNode5);
+        list.add(treeNode6);
+        list.add(treeNode7);
+        list.add(treeNode8);
+        list.add(treeNode9);
+        list.add(treeNode10);
+
+        List<TreeNode> treeNodes = TreeBuild.toTree01(list);
+
+
+        List<TreeNode> treeNodes1 = TreeSS.tree2List(treeNodes);
+        String s1 = objectMapper.writeValueAsString(treeNodes1);
+        System.out.println(s1);
+
+    }
+
+
+
+
 }
